@@ -29,7 +29,7 @@ import (
 // 	Run:     doServicePaymentCmd,
 // }
 
-func doServicePaymentCmd(cmd *cobra.Command, args []string) {
+func ServicePayment(cmd *cobra.Command, args []string) {
 	walletType := getWalletType(cmd)
 	if walletType == wtypes.WalletTypeSoft && len(fromFlag) == 0 {
 		utils.Error("The from address cannot be empty") // we don't need to specify the "from address" for hardware wallets
