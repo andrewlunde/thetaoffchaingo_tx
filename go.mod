@@ -4,6 +4,9 @@ go 1.14
 
 require (
 	github.com/onsi/gomega v1.14.0 // indirect
+	github.com/sirupsen/logrus v1.4.2
+	github.com/spf13/cobra v0.0.5
+	github.com/spf13/viper v1.5.0
 	github.com/thetatoken/theta v0.0.0
 	github.com/thetatoken/theta/common v0.0.0
 	github.com/thetatoken/theta/utils v0.0.0
