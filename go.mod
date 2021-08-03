@@ -3,13 +3,14 @@ module github.com/thetatoken/theta/tx
 go 1.14
 
 require (
+	github.com/bgentry/speakeasy v0.1.0
+	github.com/mattn/go-isatty v0.0.12
 	github.com/onsi/gomega v1.14.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.5.0
 	github.com/thetatoken/theta v0.0.0
 	github.com/thetatoken/theta/common v0.0.0
-	github.com/thetatoken/theta/utils v0.0.0
 	github.com/ybbus/jsonrpc v1.1.1
 )
 

@@ -19,31 +19,31 @@ import (
 	rpcc "github.com/ybbus/jsonrpc"
 )
 
-// servicePaymentCmd represents the send command
+// ServicePaymentCmd represents the send command
 // Example:
 //		thetacli tx service_payment --chain="privatenet" --from=2E833968E5bB786Ae419c4d13189fB081Cc43bab --to=9F1233798E905E173560071255140b4A8aBd3Ec6 --payment_seq=1 --reserve_seq=1 --resource_id=rid1000001
-// var servicePaymentCmd = &cobra.Command{
-// 	Use:     "service_payment",
-// 	Short:   "Make Service Payment from Reserve fund",
-// 	Example: `thetacli tx service_payment --chain="privatenet" --from=2E833968E5bB786Ae419c4d13189fB081Cc43bab --to=9F1233798E905E173560071255140b4A8aBd3Ec6 --payment_seq=1 --reserve_seq=1 --resource_id=rid1000001`,
-// 	Run:     doServicePaymentCmd,
-// }
+var ServicePaymentCmd = &cobra.Command{
+	Use:     "service_payment",
+	Short:   "Make Service Payment from Reserve fund",
+	Example: `thetacli tx service_payment --chain="privatenet" --from=2E833968E5bB786Ae419c4d13189fB081Cc43bab --to=9F1233798E905E173560071255140b4A8aBd3Ec6 --payment_seq=1 --reserve_seq=1 --resource_id=rid1000001`,
+	//Run:     doServicePaymentCmd,
+}
 
-func ServicePayment(cmd *cobra.Command, args []string) {
+func doServicePaymentCmd(cmd *cobra.Command, args []string) []byte {
 	walletType := getWalletType(cmd)
 	if walletType == wtypes.WalletTypeSoft && len(fromFlag) == 0 {
 		utils.Error("The from address cannot be empty") // we don't need to specify the "from address" for hardware wallets
-		return
+		return ([]byte("error"))
 	}
 
 	if len(toFlag) == 0 {
 		utils.Error("The to address cannot be empty")
-		return
+		return ([]byte("error"))
 	}
 
 	if fromFlag == toFlag {
 		utils.Error("The from and to address cannot be identical")
-		return
+		return ([]byte("error"))
 	}
 
 	var swallet wtypes.Wallet
@@ -54,16 +54,16 @@ func ServicePayment(cmd *cobra.Command, args []string) {
 	var err error
 
 	if onChainFlag {
-//	if 1 == 1 {
+		//	if 1 == 1 {
 		twallet, toAddress, err = walletUnlockWithPath(cmd, toFlag, pathFlag, passwordFlag)
 		if err != nil || twallet == nil {
-			return
+			return ([]byte("error"))
 		}
 		defer twallet.Lock(toAddress)
 	} else {
 		swallet, fromAddress, err = walletUnlockWithPath(cmd, fromFlag, pathFlag, passwordFlag)
 		if err != nil || swallet == nil {
-			return
+			return ([]byte("error"))
 		}
 		defer swallet.Lock(fromAddress)
 	}
@@ -107,11 +107,11 @@ func ServicePayment(cmd *cobra.Command, args []string) {
 			ThetaWei: new(big.Int).SetUint64(0),
 			TFuelWei: fee,
 		},
-		Source:     sinput,
-		Target:     tinput,
+		Source:          sinput,
+		Target:          tinput,
 		PaymentSequence: paymentSeqFlag,
 		ReserveSequence: reserveSeqFlag,
-		ResourceID: resourceIDFlag,
+		ResourceID:      resourceIDFlag,
 	}
 
 	// Set the Source Signature
@@ -151,15 +151,17 @@ func ServicePayment(cmd *cobra.Command, args []string) {
 	}
 	signedTx := hex.EncodeToString(raw)
 
+	var formatted []byte
+
 	if onChainFlag {
-		if dryRunFlag  {
-			formatted, err := json.MarshalIndent(servicePaymentTx, "", "    ")
+		if dryRunFlag {
+			formatted, err = json.MarshalIndent(servicePaymentTx, "", "    ")
 			if err != nil {
 				utils.Error("Failed to parse off-chain transaction: %v\n", err)
 			}
 			//fmt.Printf("On-Chain transaction(dry-run):\n%s\n", formatted)
 			fmt.Printf("%s\n", formatted)
-	
+
 		} else {
 
 			client := rpcc.NewRPCClient(viper.GetString(utils.CfgRemoteRPCEndpoint))
@@ -182,46 +184,59 @@ func ServicePayment(cmd *cobra.Command, args []string) {
 			if err != nil {
 				utils.Error("Failed to parse server response: %v\n", err)
 			}
-			formatted, err := json.MarshalIndent(result, "", "    ")
+			formatted, err = json.MarshalIndent(result, "", "    ")
 			if err != nil {
 				utils.Error("Failed to parse server response: %v\n", err)
 			}
 			//fmt.Printf("Successfully broadcasted transaction:\n%s\n", formatted)
 			// Verbose output makes parsing json difficult
-			fmt.Printf("%s\n", formatted)
+			// fmt.Printf("%s\n", formatted)
 		}
 	} else {
-		formatted, err := json.MarshalIndent(servicePaymentTx, "", "    ")
+		formatted, err = json.MarshalIndent(servicePaymentTx, "", "    ")
 		if err != nil {
 			utils.Error("Failed to parse off-chain transaction: %v\n", err)
 		}
 		//fmt.Printf("Off-Chain transaction:\n%s\n", formatted)
-		fmt.Printf("%s\n", formatted)
+		//fmt.Printf("%s\n", formatted)
 	}
+
+	return (formatted)
 
 }
 
-// func init() {
-// 	servicePaymentCmd.Flags().StringVar(&chainIDFlag, "chain", "", "Chain ID")
-// 	servicePaymentCmd.Flags().StringVar(&fromFlag, "from", "", "Address to send from")
-// 	servicePaymentCmd.Flags().StringVar(&toFlag, "to", "", "Address to send to")
-// 	servicePaymentCmd.Flags().StringVar(&pathFlag, "path", "", "Wallet derivation path")
-// 	servicePaymentCmd.Flags().Uint64Var(&paymentSeqFlag, "payment_seq", 0, "Payment sequence number of the transaction")
-// 	servicePaymentCmd.Flags().Uint64Var(&reserveSeqFlag, "reserve_seq", 0, "Reserve sequence number of the transaction")
-// 	servicePaymentCmd.Flags().StringVar(&tfuelAmountFlag, "tfuel", "0", "TFuel amount")
-// 	servicePaymentCmd.Flags().StringVar(&resourceIDFlag, "resource_id", "", "Corresponding resourceID")
-// 	servicePaymentCmd.Flags().StringVar(&feeFlag, "fee", fmt.Sprintf("%dwei", types.MinimumTransactionFeeTFuelWei), "Fee")
-// 	servicePaymentCmd.Flags().StringVar(&walletFlag, "wallet", "soft", "Wallet type (soft|nano|trezor)")
-// 	servicePaymentCmd.Flags().StringVar(&sourceSignatureFlag, "src_sig", "unsigned", "Source Signature from prior Off-Chain transaction")
-// 	servicePaymentCmd.Flags().BoolVar(&onChainFlag, "on_chain", false, "Process transaction On-Chain else return json of what would have been sent")
-// 	servicePaymentCmd.Flags().BoolVar(&asyncFlag, "async", false, "Block until tx has been included in the blockchain")
-// 	servicePaymentCmd.Flags().StringVar(&passwordFlag, "password", "", "password to unlock the wallet")
-// 	servicePaymentCmd.Flags().BoolVar(&dryRunFlag, "dry_run", false, "Dry Run(don't execute) the On-Chain transaction")
-	
-// 	servicePaymentCmd.MarkFlagRequired("chain")
-// 	servicePaymentCmd.MarkFlagRequired("from")
-// 	servicePaymentCmd.MarkFlagRequired("to")
-// 	servicePaymentCmd.MarkFlagRequired("payment_seq")
-// 	servicePaymentCmd.MarkFlagRequired("reserve_seq")
-// 	servicePaymentCmd.MarkFlagRequired("resource_id")
-// }
+func DoServicePayment() []byte {
+	return (doServicePaymentCmd(ServicePaymentCmd, make([]string, 0)))
+}
+
+func init() {
+	fmt.Println("thetaoffchaingo_tx service_payment.go init called.")
+	// https://github.com/spf13/cobra/blob/master/user_guide.md#working-with-flags
+	ServicePaymentCmd.Flags().StringVar(&chainIDFlag, "chain", "", "Chain ID")
+	ServicePaymentCmd.Flags().StringVar(&pathFlag, "config", "./thetacli", "Path to Config")
+	ServicePaymentCmd.Flags().StringVar(&fromFlag, "from", "", "Address to send from")
+	ServicePaymentCmd.Flags().StringVar(&toFlag, "to", "", "Address to send to")
+	//ServicePaymentCmd.Flags().StringVar(&pathFlag, "path", "", "Wallet derivation path")
+	ServicePaymentCmd.Flags().Uint64Var(&paymentSeqFlag, "payment_seq", 0, "Payment sequence number of the transaction")
+	ServicePaymentCmd.Flags().Uint64Var(&reserveSeqFlag, "reserve_seq", 0, "Reserve sequence number of the transaction")
+	ServicePaymentCmd.Flags().StringVar(&tfuelAmountFlag, "tfuel", "0", "TFuel amount")
+	ServicePaymentCmd.Flags().StringVar(&resourceIDFlag, "resource_id", "", "Corresponding resourceID")
+	ServicePaymentCmd.Flags().StringVar(&feeFlag, "fee", fmt.Sprintf("%dwei", types.MinimumTransactionFeeTFuelWei), "Fee")
+	ServicePaymentCmd.Flags().StringVar(&walletFlag, "wallet", "soft", "Wallet type (soft|nano|trezor)")
+	ServicePaymentCmd.Flags().StringVar(&sourceSignatureFlag, "src_sig", "unsigned", "Source Signature from prior Off-Chain transaction")
+	ServicePaymentCmd.Flags().BoolVar(&onChainFlag, "on_chain", false, "Process transaction On-Chain else return json of what would have been sent")
+	ServicePaymentCmd.Flags().BoolVar(&asyncFlag, "async", false, "Block until tx has been included in the blockchain")
+	ServicePaymentCmd.Flags().StringVar(&passwordFlag, "password", "", "password to unlock the wallet")
+	ServicePaymentCmd.Flags().BoolVar(&dryRunFlag, "dry_run", false, "Dry Run(don't execute) the On-Chain transaction")
+	ServicePaymentCmd.Flags().BoolVar(&debuggingFlag, "debugging", false, "Print verbose debugging output")
+
+	ServicePaymentCmd.MarkFlagRequired("chain")
+	ServicePaymentCmd.MarkFlagRequired("from")
+	ServicePaymentCmd.MarkFlagRequired("to")
+	ServicePaymentCmd.MarkFlagRequired("payment_seq")
+	ServicePaymentCmd.MarkFlagRequired("reserve_seq")
+	ServicePaymentCmd.MarkFlagRequired("resource_id")
+
+	rootCmd.Execute()
+
+}

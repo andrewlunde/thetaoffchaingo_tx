@@ -17,8 +17,6 @@ github.com/andrewlunde/thetaoffchaingo_common v0.1.1 h1:8pbtyCoReOZ1raw/9q3yhxXT
 github.com/andrewlunde/thetaoffchaingo_common v0.1.1/go.mod h1:PpMQbI0L6fKkQ7iWbcYqXnCZl1RMgiFCPpculs/xyMM=
 github.com/andrewlunde/thetaoffchaingo_rpc v0.1.1 h1:YYw5fbSI5QHek1bDxne4Kq0GZfsGmW/Lpg2pENdj+To=
 github.com/andrewlunde/thetaoffchaingo_rpc v0.1.1/go.mod h1:NFWyosd2rxMOOPW2ixJIzeHrAizJr/DAmqmk8JOZ5Kw=
-github.com/andrewlunde/thetaoffchaingo_utils v0.1.0 h1:sz/VTIeQBTJig9ylgN3f+mjqI6W6D3T1EG96f7tSZZg=
-github.com/andrewlunde/thetaoffchaingo_utils v0.1.0/go.mod h1:ohcSrtNK/1Hqsl8elwdAJS3ymB/MwOPX4F+IL/uUjWc=
 github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=
@@ -118,6 +116,7 @@ github.com/herumi/bls-eth-go-binary v0.0.0-20200107021104-147ed25f233e/go.mod h1
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/huin/goupnp v1.0.0/go.mod h1:n9v9KO1tAxYH82qOn+UTIFQDmx5n1Zxd/ClZDMX7Bnc=
 github.com/huin/goutil v0.0.0-20170803182201-1ca381bf3150/go.mod h1:PpLOETDnJ0o3iZrZfqZzyLl6l7F3c6L1oWn7OICBi6o=
+github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/ipfs/go-cid v0.0.1/go.mod h1:GHWU/WuQdMPmIosc4Yn1bcCT7dSeX4lBafM7iqUPQvM=
 github.com/ipfs/go-cid v0.0.2/go.mod h1:GHWU/WuQdMPmIosc4Yn1bcCT7dSeX4lBafM7iqUPQvM=
