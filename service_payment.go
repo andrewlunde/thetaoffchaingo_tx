@@ -178,6 +178,7 @@ func doServicePaymentCmd(cmd *cobra.Command, args []string) []byte {
 			}
 			if res.Error != nil {
 				utils.Error("Server returned error: %v\n", res.Error)
+				return ([]byte("Likely Expired."))
 			}
 			result := &rpc.BroadcastRawTransactionResult{}
 			err = res.GetObject(result)
